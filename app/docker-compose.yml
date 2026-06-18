@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15
+    container_name: documentos_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: documentos
+    ports:
+      - "5433:5432"
+    volumes:
+      - documentos_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  documentos_postgres_data:
+  
