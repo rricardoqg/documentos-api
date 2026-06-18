@@ -10,6 +10,10 @@ class DocumentoCreate(BaseModel):
     tipo_documento: str = Field(..., max_length=50)
     caminho_arquivo: str = Field(..., max_length=500)
 
+class DocumentoUpdateSchema(BaseModel):
+    nome: Optional[str] = Field(None, min_length=3, max_length=255)
+    prioridade: Optional[PrioridadeEnum] = None
+
 class DocumentoResponse(BaseModel):
     id: int
     nome: str

@@ -4,7 +4,10 @@ from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
 from typing import Optional
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+http_bearer = HTTPBearer()
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY", "chave-padrao-desenvolvimento")
@@ -39,3 +42,16 @@ def verificar_token(token: str) -> Optional[dict]:
         return payload
     except jwt.JWTError:
         return None
+
+
+def get_usuario_atual(credentials: HTTPAuthorizationCredentials = Depends(http_bearer)):
+    payload = verificar_token(credentials.credentials)
+    if payload is None:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+    return payload
+
+
+def get_admin_atual(current_user: dict = Depends(get_usuario_atual)):
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    return current_user
